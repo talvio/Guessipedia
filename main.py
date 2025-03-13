@@ -14,7 +14,6 @@ from coordinates import (
     which_is_east,
     compare_distance,
     get_current_location,
-    distance_pos1_pos2,
     pos_to_txt,
 )
 from wiki_api import get_random_page_with_coordinates2, get_extract
@@ -143,7 +142,7 @@ def ask_question_about_east(player, player_location, page_data):
     first_page_title, first_latitude, first_longitude, first_page_id = page_data[0]
     second_page_title, second_latitude, second_longitude, second_page_id = page_data[1]
 
-    print(f'\n{BRIGHT_YELLOW}{player} {RESET_STYLE}{BRIGHT_BLUE}"'
+    print(f'\n{BRIGHT_YELLOW}{player} {RESET_STYLE}{BRIGHT_BLUE}'
           f'which location is further east from the international dateline in the pacific? {RESET_STYLE}')
 
     player_answer = print_answer_options_and_get_answer(page_data, player_location)
@@ -163,7 +162,7 @@ def ask_question_about_distance(player, player_location, page_data):
     first_page_title, first_latitude, first_longitude, first_page_id = page_data[0]
     second_page_title, second_latitude, second_longitude, second_page_id = page_data[1]
 
-    print(f'\n{BRIGHT_YELLOW}{player} {RESET_STYLE}{BRIGHT_BLUE}"'
+    print(f'\n{BRIGHT_YELLOW}{player} {RESET_STYLE}{BRIGHT_BLUE}'
           f'which location is further away from you?{RESET_STYLE}')
 
     player_answer = print_answer_options_and_get_answer(page_data, player_location)

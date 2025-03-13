@@ -9,7 +9,6 @@ random pages with coordinate data.
 import requests
 import random
 import sys
-import time
 
 API_URL = "https://en.wikipedia.org/w/api.php"
 
@@ -28,6 +27,26 @@ def shorten_text(max_sentences, text):
     if len(text.split(".")) <= max_sentences:
         return text
     return ".".join(text.split(".")[:max_sentences]) + "."
+
+
+def access_wikimedia_api(params):
+    """
+    A fault tolerant way to access the Wikipedia API.
+    :param params:
+    :return: Tuple where the first value is True if the call was successful, False is not.
+             The second is the result of the API call.
+    """
+    try:
+        data = requests.get(API_URL, params=params).json()
+    except requests.exceptions.Timeout:
+        return False, "(No description available. Access to wiki media timed out.)"
+    except requests.exceptions.ConnectionError:
+        return False, "(No description available. Access to wiki media failed.)"
+    except requests.exceptions.HTTPError as err:
+        return False, f"(No description available. Access to wiki media failed: {err}.)"
+    except requests.exceptions.RequestException as err:
+        return False, f"(No description available. Access to wiki media failed: {err}.)"
+    return True, data
 
 
 def get_extract(page_id=None, page_title=None, max_sentences=None):
@@ -59,7 +78,10 @@ def get_extract(page_id=None, page_title=None, max_sentences=None):
         params['titles'] = page_title
     else:
         return None
-    data = requests.get(API_URL, params=params).json()
+
+    great_success, data = access_wikimedia_api(params)
+    if not great_success:
+        return data
     page_id = list(data.get('query',{}).get('pages',{}).keys())[0]
     text_extract = data.get('query',{}).get('pages',{}).get(str(page_id), {}).get('extract', None)
     if max_sentences is not None:
@@ -92,7 +114,10 @@ def find_page_ids_lat_lon(lat, lon, count=1):
         "gslimit": count
     }
 
-    data = requests.get(API_URL, params=params).json()
+    great_success, data = access_wikimedia_api(params)
+    if not great_success:
+        print(data)
+        exit()
 
     return [(x.get('pageid'),x.get('title'),x.get('lat'),x.get('lon'))
             for x in data.get("query", {}).get('geosearch', [])]
