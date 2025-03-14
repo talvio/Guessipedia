@@ -11,6 +11,8 @@ import random
 import sys
 
 API_URL = "https://en.wikipedia.org/w/api.php"
+CONNECTION_TIMEOUT = 3
+READ_TIMOUT = 10
 
 
 def shorten_text(max_sentences, text):
@@ -37,7 +39,7 @@ def access_wikimedia_api(params):
              The second is the result of the API call.
     """
     try:
-        data = requests.get(API_URL, params=params).json()
+        data = requests.get(API_URL, params=params, timeout=(CONNECTION_TIMEOUT, READ_TIMOUT)).json()
     except requests.exceptions.Timeout:
         return False, "(No description available. Access to wiki media timed out.)"
     except requests.exceptions.ConnectionError:
